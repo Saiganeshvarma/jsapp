@@ -135,8 +135,8 @@ const Certificate: React.FC<CertificateProps> = ({
                 </div>
                 <div className="mt-6">
                   <span className="block text-xs text-gray-500 mb-1">Instructor Signature</span>
+                  <span className="block text-base text-gray-700 font-signature mb-1">sai ganesh</span>
                   <span className="block w-32 h-8 border-b-2 border-gray-400"></span>
-                  <span className="block text-xs text-gray-400 mt-1">JS Learning Hub</span>
                 </div>
               </div>
               <div className="text-right">
