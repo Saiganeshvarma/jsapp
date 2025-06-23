@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Download, Award, Calendar, CheckCircle, X } from 'lucide-react';
 
 interface CertificateProps {
@@ -15,21 +15,43 @@ const Certificate: React.FC<CertificateProps> = ({
   onDownload 
 }) => {
   const certificateRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = () => {
     if (certificateRef.current) {
-      // Create a canvas to convert the certificate to image
-      import('html2canvas').then((html2canvas) => {
-        html2canvas.default(certificateRef.current!, {
-          scale: 2,
-          backgroundColor: '#ffffff'
-        }).then((canvas) => {
-          const link = document.createElement('a');
-          link.download = `JavaScript-Certificate-${userName.replace(/\s+/g, '-')}.png`;
-          link.href = canvas.toDataURL();
-          link.click();
+      setIsDownloading(true);
+      setTimeout(async () => {
+        await (document.fonts ? document.fonts.ready : Promise.resolve());
+        const cert = certificateRef.current;
+        if (!cert) {
+          setIsDownloading(false);
+          return;
+        }
+        const originalWidth = cert.style.width;
+        const originalHeight = cert.style.height;
+        cert.style.width = '';
+        cert.style.height = '';
+        import('html2canvas').then((html2canvas) => {
+          if (!cert) {
+            setIsDownloading(false);
+            return;
+          }
+          html2canvas.default(cert, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            useCORS: true,
+            scrollY: -window.scrollY
+          }).then((canvas) => {
+            cert.style.width = originalWidth;
+            cert.style.height = originalHeight;
+            setIsDownloading(false);
+            const link = document.createElement('a');
+            link.download = `JavaScript-Certificate-${userName.replace(/\s+/g, '-')}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+          });
         });
-      });
+      }, 100);
     }
     onDownload();
   };
@@ -81,7 +103,14 @@ const Certificate: React.FC<CertificateProps> = ({
               <div className="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <Award className="h-10 w-10 text-white" />
               </div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+              <h1
+                className={
+                  isDownloading
+                    ? "text-4xl font-bold text-blue-600 mb-2 font-sans tracking-wide text-center w-full"
+                    : "text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2"
+                }
+                style={isDownloading ? { letterSpacing: '0.02em', textAlign: 'center', width: '100%' } : {}}
+              >
                 Certificate of Achievement
               </h1>
               <p className="text-lg text-gray-600">JavaScript Programming Fundamentals</p>
