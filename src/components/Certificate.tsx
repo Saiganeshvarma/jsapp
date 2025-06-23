@@ -22,9 +22,7 @@ const Certificate: React.FC<CertificateProps> = ({
       import('html2canvas').then((html2canvas) => {
         html2canvas.default(certificateRef.current!, {
           scale: 2,
-          backgroundColor: '#ffffff',
-          width: 800,
-          height: 600
+          backgroundColor: '#ffffff'
         }).then((canvas) => {
           const link = document.createElement('a');
           link.download = `JavaScript-Certificate-${userName.replace(/\s+/g, '-')}.png`;
